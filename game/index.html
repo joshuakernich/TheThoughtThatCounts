@@ -1,0 +1,1341 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+	<script type="text/javascript" src='https://code.jquery.com/jquery-3.3.1.min.js'></script>
+	<title>The Thought That Counts</title>
+	<script type="text/javascript">
+		$(function(){
+			
+			var iThought = -1;
+			var thoughts =[
+				{
+					transition:doIntroTranstion,
+					q:[
+						"Another beautiful day to be alive.",
+						"Life sucks.",
+						"I want Burrito."
+					],
+					f:[
+						{text:"That's a jolly good attitude."},
+						{text:"You're not wrong, little fella."},
+						{text:"Sadly. There is no Burrito."}
+					],
+				},
+				{
+					transition:doRunTransition,
+					transitionParams:{type:'pig'},
+					intro:'A wild pig man approaches.',
+					q:[
+						"Looks like a friend in the making.",
+						"I greatly fear this new unknown.",
+						"I wonder if he has Burrito."
+					],
+					f:[
+						{text:"The wild pig man attacks!",action:battle},
+						{text:"The wild pig man attacks!",action:battle},
+						{text:"The wild pig man attacks!",action:battle}
+					],
+				},
+				{
+					q:[
+						"Probably mistaken identity.",
+						"Fuck this guy.",
+						"There is more to life than Burrito."
+					],
+					f:[
+						{text:"The wild pig man apologizes for his actions."},
+						{text:"The wild pig man attacks again!",action:battle},
+						{text:"A valuable insight."}
+					],
+				},
+				{
+					q:[
+						"I tire of wild pig man.",
+						"Wild pig man probably suffers from unresolved childhood trauma.",
+						"I leave this place with a new friend."
+					],
+					f:[
+						{text:"Let's carry on."},
+						{text:"Wisdom beyond your years."},
+						{text:"Always nice to make a new friend."}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{},
+					q:[
+						"It's nice to have a moment to myself.",
+						"I'm lonely out here in the wild.",
+						"I miss the wild pig man."
+					],
+					f:[
+						{text:"Stay as long as you like."},
+						{text:"Perhaps you shouldn't have abandoned wild pig man so quickly."},
+						{text:"I miss him too."}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'strawb'},
+					intro:'Holy shit! A tasty Strawb!',
+					q:[
+						"Fuck, I love Strawbs!",
+						"Plants are animal food, not man food!",
+						"A gift from the Gods!"
+					],
+					f:[
+						{text:"You ate Strawb!",action:eat},
+						{text:"Yeah! Fuck that Strawb."},
+						{text:"God giveth. God taketh away.",action:flyAway}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'pig'},
+					intro:'Wild pig man has returned.',
+					q:[
+						"Fuck, not this guy again!",
+						"I wish he'd go away.",
+						"Mr Pig Man! My old friend!"
+					],
+					f:[
+						{text:"Let's ignore him."},
+						{text:"Let's ignore him."},
+						{text:"You exchange an approving nod."}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'bunny'},
+					intro:'Looks like Professor Bunnykins from Bunnsville.',
+					q:[
+						"This is why we need a rabbit-proof fence.",
+						"I owe all of God's creatures my respect.",
+						"Yum. Bunny for dinner."
+					],
+					f:[
+						{text:"Professor Bunnykins is unphased by your disdain."},
+						{text:"God giveth. God taketh away.",action:flyAway},
+						{text:"You ate Professor Bunnykins! He was delicious.",action:eat}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'bunny'},
+					intro:'Wait! what?',
+					q:[
+						"Must be a glitch in the Matrix.",
+						"Life doesn't often give us second chances.",
+						"Perhaps I should rethink my approach."
+					],
+					f:[
+						{text:"A glitch? Or an opportunity?"},
+						{text:"A second chance? Or an opportunity?"},
+						{text:"Tread carefully. You may not come by this place again."}
+					],
+				},
+				{
+					intro:'Looks like Professor Bunnykins from Bunnsville.',
+					q:[
+						"This is why we need a rabbit-proof fence.",
+						"I owe all of God's creatures my respect.",
+						"Yum. Bunny for dinner."
+					],
+					f:[
+						{text:"Professor Bunnykins is unphased by your disdain."},
+						{text:"God giveth. God taketh away.",action:flyAway},
+						{text:"You ate Professor Bunnykins! He was delicious.",action:eat}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'bunny'},
+					intro:"Third time's a charm.",
+					q:[
+						"Friendship may be a worthy option, here.",
+						"I'm beggining to appreciate Professor Bunnykins.",
+						"Wait. These options are different."
+					],
+					f:[
+						{text:"Professor Bunnykins appreciates your affection."},
+						{text:"Professor Bunnykins appreciates your affection."},
+						{text:"You're on to me."}
+					],
+				},
+				{
+					q:[
+						"Perhaps this friendship could be sealed with a kiss.",
+						"I should ask for consent before I touch him.",
+						"I've never fucked a rabbit before."
+					],
+					f:[
+						{text:"Professor Bunnykins ran away.",action:runAway},
+						{text:"Professor Bunnykins affirms his boundaries."},
+						{text:"Professor Bunnykins ran away.",action:runAway}
+					],
+				},{
+					transition:doRunTransition,	
+					transitionParams:{},
+					q:[
+						"I think I did well with Professor Bunnykins.",
+						"I'm feeling akward in these social situations.",
+						"I could sure eat another Strawb."
+					],
+					f:[
+						{text:"This was never a test."},
+						{text:"And that's welcome, too."},
+						{text:"You and me both."}
+					],
+				},{
+					transition:doRunTransition,	
+					transitionParams:{type:'strawb'},
+					q:[
+						"Ah yes. Delish.",
+						"I don't deserve this.",
+						"Where are these Strawbs coming from?"
+					],
+					f:[
+						{text:"You ate Strawb",action:eat},
+						{text:"It was a gift."},
+						{text:"That's a good question."}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'pig'},
+					q:[
+						"I don't really have the energy for wild pig man.",
+						"I wish I could find some space out here.",
+						"Mister pig man doesn't really care about me."
+					],
+					f:[
+						{text:"Let's carry on."},
+						{text:"Let's ignore him."},
+						{text:"You're probably right."}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:'log'},
+					intro:"If it isn't old man, Mister Loggington",
+					q:[
+						"I don't have space in my life for a new friend right now.",
+						"I wish I could find some space out here.",
+						"This is making me anxious."
+					],
+					f:[
+						{text:"Let's carry on."},
+						{text:"Let's carry on."},
+						{text:"Let's carry on."}
+					],
+				},
+				{
+					transition:doRunTransition,	
+					transitionParams:{type:''},
+					q:[
+						"I'm very much alone out here.",
+						"This is exhausting.",
+						"I wish I could shake this anxiety."
+					],
+					f:[
+						{text:"Let's carry on."},
+						{text:"Let's carry on."},
+						{text:"Let's carry on."}
+					],
+				},
+				{
+					transition:doRunForever,
+					q:[
+						"This is a path I have to walk alone.",
+						"It's been a long time since there was a Strawb.",
+						"If Professor Bunnington really cared, he'd call me."
+					],
+					f:[
+						{text:"Some challenges are best faced alone."},
+						{text:"Used to be a lot of Strawbs around here."},
+						{text:"You're damn right."}
+					],
+				},
+				{
+					q:[
+						"I am very much alone.",
+						"There are no more Strawbs for me.",
+						"This anxiety is killing me."
+					],
+					f:[
+						{text:"A good opportunity to take some space."},
+						{text:"Yeah. I think that party is over."},
+						{text:"You should look within."}
+					],
+				},
+				{
+					q:[
+						"I am alone.",
+						"It's hopeless.",
+						"I can't do this any more."
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					q:[
+						"It's hopeless.",
+						"I can't do this any more.",
+						"Nothing is going my way."
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					transition:doThunderTransition,
+					q:[
+						"I can't do this any more.",
+						"I can't do this any more.",
+						"I can't do this any more."
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					q:[
+						"There is no way out.",
+						"There is no way out.",
+						"There is no way out."
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					transition:doCliffTransition,
+					q:[
+						"I am going to end it.",
+						"I am going to end it.",
+						"I am going to end it.",
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					transition:doPigFinale,
+					intro:`"Dont't do it."`,
+					q:[
+						"Why shouldn't I?",
+						"Why shouldn't I?",
+						"Why shouldn't I?"
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					transition:doBunnyFinale,
+					intro:`"Because you are loved."`,
+					q:[
+						"But I am alone.",
+						"But I am alone.",
+						"But I am alone.",
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					transition:doLogFinale,
+					intro:`"You're not alone."`,
+					q:[
+						"But you won't be always be here.",
+						"But the world is a lonely place.",
+						"But you weren't here when I needed you.",
+					],
+					f:[
+						{},
+						{},
+						{}
+					]
+				},
+				{
+					transition:doStrawbs,
+					q:[
+						"I do like Strawbs.",
+						"That's very thoughtful.",
+						"Maybe just one.",
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				},
+				{
+					transition:doWin,
+					q:[
+						
+					],
+					f:[
+						{},
+						{},
+						{}
+					],
+				}
+			]
+
+
+
+			function doNextThought(){
+				
+				if(thoughts[iThought].intro) doThoughtIntro();
+				else doThoughtBubble();
+			}
+
+			function doThoughtIntro(){
+				$('.message').html(thoughts[iThought].intro).animate({opacity:1},500).delay(1500).animate({opacity:0},500)
+				setTimeout(doThoughtBubble,2500);
+			}
+
+			function doThoughtBubble(){
+				$('.question').empty();
+				$('.question').animate({opacity:1});
+
+				var thought = thoughts[iThought];
+
+				for(var i=0; i<thought.q.length; i++){
+					$('<button>').appendTo($('.question')).text(thought.q[i]).click(onThoughtSelect);
+				}	
+
+				setTimeout(activateButtons,1000);
+			}
+
+			function onThoughtSelect(){
+				$('.question button').addClass('dead');
+				$(this).addClass('selected').removeClass('dead');
+
+				var index = $('.question button').index(this);
+
+
+				$('.question').delay(1700).animate({opacity:0});
+				if(thoughts[iThought].f[index].text) $('.feedback').html(thoughts[iThought].f[index].text).css({top:'100vh'}).delay(2000).animate({top:'50vh'}).animate({top:'45vh'},3000).animate({top:'-150px'});
+
+
+				if( thoughts[iThought].f[index].action ){
+					thoughts[iThought].f[index].action.call();
+				} 
+
+				var delay = 3500;
+				if(thoughts[iThought].f[index].text) delay = 6500;
+
+				setTimeout( finishThought, delay );
+				
+			}	
+
+			function finishThought(){
+				iThought++;
+				if( thoughts[iThought].transition ) thoughts[iThought].transition.call();
+				else doNextThought();
+			}
+
+
+			// TRANSITIONS
+			var iRun = 0;
+			function doRunTransition(){
+
+				var $old = $('.enemy');
+
+				if(thoughts[iThought].transitionParams.type){
+					var $new = $('<div class="sprite enemy">').appendTo('.game').addClass(thoughts[iThought].transitionParams.type);
+					$new.animate({left:'50vw'},4000,'linear'); 
+
+				}
+
+				iRun++;
+				var offset = -iRun*50;
+
+				$('.character').appendTo('.game').addClass('run').animate({left:'40vw'},4000,'linear',onTransitionComplete); 
+				$('.ground-surface').animate({'background-position-x':(''+offset+'vw')},4000,'linear'); 
+
+				if($old) $old.animate({left:'-50px'},4000,'linear',function(){
+					$old.remove();
+				}); 		
+			}
+
+			function doRunForever(){
+				var cycles = 100;
+				iRun += 100;
+				var offset = -iRun*50;
+
+				$('.character').addClass('run');
+				$('.ground-surface').animate({'background-position-x':(''+offset+'vw')},4000*cycles,'linear'); 
+
+				setTimeout(doNextThought,4000);
+			}
+
+			function doCliffTransition(){
+				$('.ground-surface').stop();
+				$('.game').animate({bottom:'150px'},4000,'linear');
+				$('.ground').animate({left:'-55vw'},4000,'linear',function(){
+					$('.character').removeClass('run');
+					
+					setTimeout(doNextThought,1000);
+				});
+			}
+
+			function flashMessage(text){
+				$('.message').text(text).stop().css({opacity:1}).delay(1250).animate({opacity:0},500);
+			}
+
+			function doPigFinale(){
+				$('.character').addClass('run').animate({left:'45vw'},1000,function(){
+					$('.character').removeClass('run');
+				});
+
+				function doWait(){
+					flashMessage(`"Wait..."`);
+				}
+
+				function doMisterPig(){
+					$('<div class="sprite enemy pig run">').appendTo('.game').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'20vw'},1000,'linear', function(){
+						$(this).removeClass('run');
+					});
+				}
+
+				setTimeout(doWait,1000);
+				setTimeout(doMisterPig,2000);
+				setTimeout(doNextThought,4000);
+			}
+
+			function doBunnyFinale(){
+				$('<div class="sprite enemy bunny run">').appendTo('.game').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'15vw'},1000,'linear', function(){
+					$(this).removeClass('run');
+				});
+				setTimeout(doNextThought,2000);
+			}
+
+			function doLogFinale(){
+				$('<div class="sprite enemy log run">').appendTo('.game').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'8vw'},1000,'linear', function(){
+					$(this).removeClass('run');	
+				});
+
+				setTimeout(function(){
+					flashMessage(`"You're not alone."`);
+				},2000);
+
+				setTimeout(function(){
+					flashMessage(`"We are here."`);
+				},4000);
+
+				setTimeout(function(){
+					$('.character').css({transform:'scaleX(-1)'}).animate({left:'43vw'},200);
+				},5000);
+
+				
+
+				setTimeout(doThoughtBubble,6000);
+			}
+
+			function doStrawbs(){
+
+				setTimeout(function(){
+					$('.pig').addClass('run').animate({left:'25vw'},1000,function(){
+						$(this).removeClass('run');
+					});
+				},100);
+
+				setTimeout(function(){
+					$('.bunny').addClass('run').animate({left:'18vw'},1000,function(){
+						$(this).removeClass('run');
+					});
+				},250);
+
+				setTimeout(function(){
+					$('.log').addClass('run').animate({left:'10vw'},1000,function(){
+						$(this).removeClass('run');
+					});
+				},500);
+
+
+				setTimeout(function(){
+					flashMessage(`"You're right."`);
+				},1000);
+
+				setTimeout(function(){
+					flashMessage(`"But we are here now."`);
+				},4000);
+
+				setTimeout(function(){
+					flashMessage(`"And wherever we go..."`);
+				},7000);
+
+				setTimeout(function(){
+					flashMessage(`"You will always be loved."`);
+				},10000);
+
+				setTimeout(function(){
+					flashMessage(`"Also..."`);
+				},15000);
+
+				setTimeout(function(){
+					flashMessage(`"We have Strawbs."`);
+				},18000);
+
+				setTimeout(doThoughtBubble,21000);
+			}
+
+			function doWin(){
+				$('.bg').removeClass('thunder');
+
+				setTimeout(function(){
+					$('.enemy').each(function(){
+					$('<div class="sprite enemy strawb">').appendTo('.game').css({left:$(this).css('left')}).animate({top:-150});
+					})
+				},500);
+
+				setTimeout(function(){
+					$('.character').addClass('run').animate({left:'35vw'},1000,function(){
+						$('.character').removeClass('run');
+					})
+				},1000);
+
+				setTimeout(function(){
+					$('.strawb').each(function(){
+						$(this).animate({left:'35vw',top:'-50px'},1000,function(){
+							$(this).remove();
+						})
+					})
+				},2500);
+
+				setTimeout(function(){
+					$('.character').addClass('run').animate({left:'-100px'},4000);
+				},4500);
+
+				setTimeout(function(){
+					$('.log').css({transform:'scaleX(1)'}).addClass('run').animate({left:'-100px'},3000);
+				},6500);
+
+				setTimeout(function(){
+					$('.bunny').css({transform:'scaleX(1)'}).addClass('run').animate({left:'-100px'},2000);
+				},7000);
+
+				setTimeout(function(){
+					$('.pig').css({transform:'scaleX(1)'}).addClass('run').animate({left:'-100px'},2000);
+				},7500);
+
+				setTimeout(function(){
+					$('.finale').animate({opacity:1},2000).delay(1500).animate({top:-$('.finale').height()+$(window).innerHeight()},30000,'linear');
+				},10000);
+			}
+
+			function doThunderTransition(){
+				$('.bg').addClass('thunder');
+				setTimeout(doNextThought,4000);
+			}
+
+			function doIntroTranstion(){
+				$('.character').addClass('run').animate({left:'40vw'},4000,'linear',onTransitionComplete); 
+			}
+
+			function onTransitionComplete(){
+				$('.character').removeClass('run');
+				doNextThought();
+			}
+
+			// ACTIONS
+			function flyAway(){
+				$('.enemy').animate({top:'-100vh'},1000,function(){
+					$('.enemy').remove();
+				});
+			}
+
+			function runAway(){
+				$('.enemy').css({transform:'scaleX(-1)'}).addClass('run').animate({left:'100vw'},2000,function(){
+					$('.enemy').remove();
+				});
+			}
+
+			function eat(){
+				$('.character').delay(500).animate({left:'50vw'},100,function(){
+					$('.enemy').remove();
+				}).delay(500).animate({left:'40vw'},100);
+			}
+
+			function battle(){
+				$('.enemy').delay(500).animate({left:'40vw'},100,ouch).delay(500).animate({left:'50vw'},100);
+			}
+
+			function ouch(){
+				$('.character').addClass('ouch').animate({left:'38vw'},200).delay(500).animate({left:'40vw'},300,idle);
+			}
+
+			function idle(){
+				$('.character').removeClass('ouch run');
+			}
+
+			$('button').click(function(){
+				$('.intro button').addClass('selected');
+				$('.intro').delay(800).animate({bottom:'100vh'},1000,function(){
+					$('.intro').hide();
+					finishThought();
+				});
+			});
+
+			//$('.intro').hide();
+
+			//iThought = -1;
+			//iThought = 15;
+			//iThought = 23;
+			
+			
+			
+
+			//finishThought();
+
+			//$('.character').css({left:0}).addClass('ouch');
+
+			var firstTime = true;
+	      	var voted = false;
+
+			var selection = [];
+			var launchpad;
+			var map = {};
+			var red = 15;
+			var orange = 63;
+			var green = 60;
+			var yellow = 62;
+			var gray = 29;
+			var off = 12;
+			var buttons = [
+				[16*4+0,16*5+0,16*6+0],
+				[16*4+3,16*5+3,16*6+3],
+				[16*4+6,16*5+6,16*6+6]
+			]
+			buttons.length = 1;
+			var colors = [red,orange,green]
+
+			navigator.requestMIDIAccess().then(onMIDISuccess, onMIDIFailure);
+			function onMIDIFailure(midiAccess) {
+
+			}
+
+			function onMIDISuccess(midiAccess) {
+
+				
+
+				for (var output of midiAccess.outputs.values()){
+					if(output.name == "Launchpad Mini"){
+						launchpad = output;
+						for(var b=0; b<buttons.length; b++){
+							for(var i=0; i<buttons[b].length; i++){
+								//output.send([144,buttons[b][i],colors[i]]);
+								map[buttons[b][i]] = {nPlayer:b,nChoice:i,buttons:buttons[b]};
+							}
+						}
+					}
+				}
+
+		        for (var input of midiAccess.inputs.values()){
+					if(input.name == "Launchpad Mini"){
+						input.onmidimessage = onLaunchpadMessage;
+					}
+		        }
+
+		        activateButtons();
+	      }
+
+	      function voteFor(n){
+
+	      	voted = true;
+  			setTimeout(function(){
+  				if(firstTime){
+  					firstTime = false;
+  					$('.intro button').trigger('click');
+
+  				} else {
+
+  					$('.question button').eq(n).trigger('click');
+  				}
+  				
+  				hideButtons();
+  			},1500);
+	      }
+
+	      function checkAllVoted(){
+
+	      	voteFor(selection[0]);
+	      	return;
+	      	var votes = [0,0,0];
+
+	      	if(selection[0] > -1 && selection[1] > -1 && selection[2] > -1){
+
+	      		votes[selection[0]]++;
+	      		votes[selection[1]]++;
+	      		votes[selection[2]]++;
+
+
+		      	for(var i=0; i < votes.length; i++){
+
+		      		if(votes[i]>0) $('<div class="count">').appendTo($('.question button').eq(i)).html(votes[i]);
+
+		      		if(votes[i]>1) voteFor(i);
+		      	}
+
+		      	if(!voted) voteFor(Math.floor(Math.random()*3));
+		      }
+	      }
+
+	      function activateButtons(){
+	      	voted = false;
+	      	selection = [-1,-1,-1];
+	      	for(var b=0; b<buttons.length; b++){
+				for(var i=0; i<buttons[b].length; i++){
+					if(launchpad) launchpad.send([144,buttons[b][i],colors[i]]);
+				}
+			}
+	      }
+
+	      function hideButtons(){
+	      	for(var b=0; b<buttons.length; b++){
+				for(var i=0; i<buttons[b].length; i++){
+					if(launchpad) launchpad.send([144,buttons[b][i],off]);
+				}
+			}
+	      }
+
+	      function onLaunchpadMessage(midiMessage) {
+
+	      	if(midiMessage.data[0] == 144){
+	          var nButton = midiMessage.data[1];
+
+	          if(map[nButton] && selection[map[nButton].nPlayer]<0){
+					selection[map[nButton].nPlayer] = map[nButton].nChoice;
+					for(var i in map[nButton].buttons){
+						launchpad.send([144,map[nButton].buttons[i],gray]);
+					}
+					launchpad.send([144,nButton,yellow]);
+
+					checkAllVoted();
+				}
+			}
+	        
+	      }
+
+	      /*var $reader = $("<ol class='reader'>").appendTo('body');
+	      for(var i in thoughts){
+	      	var $thought = $("<li class='thought'>").appendTo($reader);
+
+	      	if(thoughts[i].intro) $thought.append(thoughts[i].intro);
+	      	else $thought.append('<br>');
+
+	      	var $qs = $('<ul>').appendTo($thought);
+	      	for(var q in thoughts[i].q){
+	      		var $q = $("<li>").appendTo($qs).html(thoughts[i].q[q]);
+	      		if(thoughts[i].f[q].text) $q.append('<br><i>'+thoughts[i].f[q].text+'</i>');
+	      	}
+	      }*/
+	      
+			
+		})
+	</script>
+	<style>
+
+		.reader{
+			position: fixed;
+			top: 0px;
+			bottom: 0px;
+			overflow-y: scroll;
+			background: white;
+		}
+
+
+		@keyframes scroll{
+			0%{
+				background-position: left;
+			}
+			100%{
+				background-position:right;
+			}
+		}
+
+		body{
+			background: black;
+			
+			padding: 0px;
+			margin: 0px;
+			background: #ddddff;
+			font-family: 'VT323', monospace;
+
+		}
+
+		.count{
+			position: absolute;
+			right: 5px;
+			top: 5px;
+			background: yellow;
+			padding: 5px;
+			font-size: 20px;
+			border: 2px solid #333;
+		}
+
+		.count:before{
+			content: "+ ";
+		}
+
+		.bg{
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			width: 100%;
+			height: 100%;
+
+			
+			background: url('./beach.png');
+			background-size: cover;
+			background-repeat: no-repeat;
+			background-position: bottom;
+
+		}
+
+		.bg.thunder{
+			background-image: url('./storm.gif');
+		}
+
+		.game{
+			width: 100%;
+			position: absolute;
+			bottom: 48px;
+
+		}
+
+		.ground{
+			position: absolute;
+			bottom: 0px;
+			left: 0px;
+			width: 100%;
+		}
+
+		.ground-surface{
+			display: block;
+			position: absolute;
+			top: -94px;
+			left: 0px;
+			height: 96px;
+			width: 100%;
+			background: url('./rocks.png');
+			background-size: 960px;
+			background-position: 0px;
+		}
+
+		.ground-block{
+			display: block;
+			position: absolute;
+			top: 0px;
+			left: 0px;
+			height: 50vh;
+			width: 100%;
+			background: #F99CC0;
+			border-top: 2px solid #272931;
+			box-sizing: border-box;
+			border-right: 2px solid #272931;
+		}
+
+		.ground-cliff{
+			content: "";
+			display: block;
+			width: 48px;
+			height: 96px;
+			position: absolute;
+			right: -46px;
+			background-image: url('./cliff-edge.png');
+
+		}
+
+		.sprite{
+			width: 64px;
+			height: 64px;
+			position: absolute;
+			top: -64px;
+			
+			animation: scroll;
+			animation-duration: 1s;
+			animation-iteration-count: infinite;
+			animation-timing-function: steps(10);
+		}
+
+		.sprite.character{
+			background: url('./sprites/Main Characters/Pink Man/Idle (32x32).png');
+			background-size: 704px;
+			left: -64px;
+		}
+
+		.sprite.character.run{
+			background-image: url('./sprites/Main Characters/Pink Man/Run (32x32).png');
+			background-size: 768px;
+			animation-timing-function: steps(11);
+		}
+
+		.sprite.character.ouch{
+			background-image: url('./sprites/Main Characters/Pink Man/Hit (32x32).png');
+			background-size: calc(7 * 64px);
+			animation-timing-function: steps(6);
+			animation-duration: 0.5s;
+		}
+
+		.sprite.enemy{
+			left: 100vw;
+		}
+
+		.sprite.log{
+			width: 128px;
+			height: 64px;
+			background: url('./sprites/Enemies/Trunk/Idle (64x32).png');
+			background-size: calc( 18 * 128px );
+			animation-timing-function: steps(17);
+			top: -64px;
+		}
+
+		.sprite.log.run{
+			background: url('./sprites/Enemies/Trunk/Run (64x32).png');
+			background-size: calc( 14 * 128px );
+			animation-timing-function: steps(13);
+		}
+
+		.sprite.bunny{
+			width: 64px;
+			height: 80px;
+			background: url('./sprites/Enemies/Bunny/Idle (34x44).png');
+			background-size: calc( 8 * 64px );
+			animation-timing-function: steps(7);
+			top: -80px;
+		}
+
+		.sprite.bunny.run{
+			background: url('./sprites/Enemies/Bunny/Run (34x44).png');
+			background-size: calc( 12 * 64px );
+			animation-timing-function: steps(11);
+		}
+
+		.sprite.pig{
+			width: 72px;
+			height: 60px;
+			background: url('./sprites/Enemies/AngryPig/Idle (36x30).png');
+			background-size: 648px;
+			animation-timing-function: steps(8);
+			top: -60px;
+		}
+
+		.sprite.pig.run{
+			background: url('./sprites/Enemies/AngryPig/Walk (36x30).png');
+			background-size: calc( 16 * 72px );
+			animation-timing-function: steps(15);
+		}
+
+		.sprite.strawb{
+			width: 64px;
+			height: 64px;
+			background: url('./sprites/Items/Fruits/Strawberry.png');
+			background-size: calc( 17 * 64px );
+			animation-timing-function: steps(16);
+			top: -64px;
+		}
+
+		.intro{
+			width: 100%;
+			text-align: center;
+			font-size: 100px;
+
+			position: absolute;
+			bottom: 200px;
+			left: 0px;
+			right: 0px;
+		}
+
+		.intro h1{
+
+			font: inherit;
+			margin: 0px;
+			color: #555;
+			text-shadow: 0px 2px white;
+		}
+
+		.intro button{
+			font: inherit;
+			color: #272931;
+			background: none;
+			border-radius: 0px;
+			padding: 10px 20px;
+			font-size: 50px;
+			
+			background: #F99CC0;
+			
+			border-image: url('./bubble.png');
+			border-image-slice: 16 fill;
+			border-image-width: 32px;
+			image-rendering: pixelated;
+			border-radius: 32px;
+			box-shadow: 0px 5px rgba(0,0,0,0.2), inset 0px 20px rgba(255,255,255,0.2);
+
+			color: #333;
+			text-shadow: 0px 2px white;
+
+			position: relative;
+			left: 50px;
+
+		}
+
+		.intro button.selected{
+			background: yellow;
+		}
+
+		.bubble{
+			border-image: url('./bubble.png');
+			border-image-slice: 16 fill;
+			border-image-width: 32px;
+			image-rendering: pixelated;
+			display: inline-block;
+			padding: 20px 50px;
+			border-radius: 32px;
+			box-shadow: 0px 5px rgba(0,0,0,0.2), inset 0px 20px rgba(255,255,255,0.2);
+			position: relative;
+		}
+
+		.question.bubble{
+			padding: 20px 30px;
+			width: 680px;
+		}
+
+		.bubble:before, .bubble:after{
+			content: "";
+			width: 64px;
+			height: 64px;
+			display: block;
+			position: absolute;
+			left: 100px;
+			bottom: -80px;
+			border-image: url('./bubble.png');
+			border-image-slice: 16 fill;
+			border-image-width: 32px;
+			image-rendering: pixelated;
+			display: inline-block;
+			padding: 0px;
+			border-radius: 32px;
+			box-shadow: 0px 5px rgba(0,0,0,0.2), inset 0px 20px rgba(255,255,255,0.2);
+			box-sizing: border-box;
+		}
+
+		.bubble:after{
+			width: 32px;
+			height: 32px;
+			bottom: -120px;
+			left: 150px;
+		}
+
+		.question{
+			position: absolute;
+			width: 500px;
+			bottom: 320px;
+			left: 0px;
+			right: 0px;
+			margin: auto;
+
+			transition: 0.5s all;
+			transform-origin: 0% 150%;
+			opacity: 0;
+		}
+
+		.question button{
+			display: block;
+			width: 100%;
+			font: inherit;
+			font-size: 30px;
+			background: none;
+			border: none;
+			text-align: left;
+			padding: 10px;
+			border-bottom: 2px solid #555;
+			position: relative;
+			padding-right: 40px;
+		}
+
+		.question button:last-of-type{
+			border-bottom: 0px;
+		}
+
+		.question button:before{
+			content: "";
+			width: 20px;
+			height: 20px;
+			margin-right: 15px;
+			background: #ff7777;
+			display: inline-block;
+			vertical-align: middle;
+			border: 2px solid #777;
+		}
+
+		.question button:nth-of-type(2):before{
+			background: #ffbb77;
+		}
+
+		.question button:nth-of-type(3):before{
+			background: #99ff99;
+		}
+
+		.question button.dead{
+			opacity: 0.2;
+		}
+
+		.question button.selected{
+			background: yellow;
+		}
+
+		.question.shrunk{
+			opacity: 0;
+		}
+
+		.feedback{
+			text-align: center;
+			width: 100%;
+			position: absolute;
+			top: 100%;
+			left: 0px;
+			right: 0px;
+			padding: 20px 50px;
+			box-sizing: border-box;
+			font-size: 50px;
+			background: white;
+			border-top: 2px solid #555;
+			border-bottom: 2px solid #555;
+			color: #777;
+			text-shadow: 0px -1px rgba(0,0,0,1);
+			
+		}
+
+		.message{
+			text-align: center;
+			width: 100%;
+			position: absolute;
+			
+			left: 0px;
+			right: 0px;
+			bottom: 400px;
+			margin: auto;
+
+			padding: 10px 50px;
+			box-sizing: border-box;
+			font-size: 50px;
+			color: white;
+			
+			text-shadow: 0px 2px rgba(0,0,0,0.4);
+			pointer-events: none;
+		}
+
+		.finale{
+			position: fixed;
+			top: 0px;
+			left: 0px;
+			right: 0px;
+			min-height: 100vh;
+			color: white;
+			background: black;
+			text-align: center;
+			font-size: 50px;
+			padding: 100px;
+			opacity: 0;
+			pointer-events: none;
+		}
+
+		.finale .credit{
+			display: inline-block;
+			width: 40%;
+			font-size: 30px;
+			line-height: 30px;
+			text-align: left;
+			margin: 8px;
+		}
+
+		.finale .credit.left{
+			text-align: right;
+		}
+
+		.finale .screen{
+			height: 100vh;
+			padding-top: 25vh;
+			box-sizing: border-box;
+		}
+
+		.finale h1{
+			font-size: 70px;
+			line-height: 70px;
+		}
+
+		.finale p{
+			line-height: 30px;
+			font-size: 30px;
+
+		}
+
+		.finale h2{
+			font-size: 50px;
+			line-height: 50px;
+			margin: 10px;
+		}
+
+	</style>
+</head>
+<body>
+	<div class='bg'></div>
+	<div class='game'>
+		<div class='ground'>
+			<div class='ground-block'></div>
+			<div class='ground-surface'></div>
+			<div class='ground-cliff'></div>
+		</div>
+		<div class='sprite character'></div>
+		
+	</div>
+	<div class='intro'>
+		<div class='bubble'><h1>The Thought<br>that Counts</h1></div><br>
+		<button>start ></button>
+	</div>
+	<div class='question bubble'>
+
+	</div>
+	<div class="message"></div>
+	<div class="feedback">Hello</div>
+	<div class='finale'>
+		<div class='screen'><h1>The Thought<br>that Counts</h1></div>
+		
+		<div class='credit left'>Hero</div><div class='credit'>as Himself</div><br>
+		<div class='credit left'>Wild Pig Man</div><div class='credit'>as Himself</div><br>
+		<div class='credit left'>Professor Bunnykins</div><div class='credit'>as Himself</div><br>
+		<div class='credit left'>Mister Loggington</div><div class='credit'>as Himself</div><br>
+
+		<div class='screen'>
+			<p>Graphics and what not by</p>
+			<h2>Some dudes on the internet</h2>
+		</div>
+		<div class='screen'>
+			<p>Written and Created by</p>
+			<h2>Joshua Kernich</h2>
+		</div>
+		
+		
+	</div>
+</body>
+</html>
