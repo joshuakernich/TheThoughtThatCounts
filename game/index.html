@@ -14,8 +14,10 @@
 			},
 
 			INTRO:[176,0,0],
-			STROLL:[176,0,1],
+			STROLL_A:[176,0,1],
 			STROLL_B:[176,0,2],
+			STROLL_C:[176,0,3],
+			
 
 			INTERESTING:[176,1,0],
 			CHOICE:[176,1,1],
@@ -36,11 +38,13 @@
 			ANTICIPATION_C:[176,3,4],
 		}
 
+		MUSIC.STROLLS = [MUSIC.STROLL_A,MUSIC.STROLL_B,MUSIC.STROLL_C];
+
 		$(function(){
 			
 			var iThought = -1;
 
-			iThought = 16;
+			iThought = 25;
 
 			var thoughts =[
 				{
@@ -157,7 +161,7 @@
 				{
 					transition:doRunTransition,	
 					transitionParams:{type:'bunny'},
-					isInteresting:true,
+					trackIntro:MUSIC.INTERESTING,
 					intro:'Wait! what?',
 					q:[
 						"Must be a glitch in the Matrix.",
@@ -284,7 +288,7 @@
 				},
 				{
 					isWonky:true,
-					track:MUSIC.DESCENT_A,
+					//track:MUSIC.DESCENT_A,
 					transition:doRunForever,
 					q:[
 						"This is a path I have to walk alone.",
@@ -299,7 +303,7 @@
 				},
 				{
 					isWonky:true,
-					track:MUSIC.DESCENT_B,
+					track:MUSIC.DESCENT_A,
 					q:[
 						"I am very much alone.",
 						"There are no more Strawbs for me.",
@@ -313,7 +317,7 @@
 				},
 				{
 					isWonky:true,
-					track:MUSIC.DESCENT_C,
+					track:MUSIC.DESCENT_B,
 					q:[
 						"I am alone.",
 						"It's hopeless.",
@@ -381,7 +385,7 @@
 					],
 				},
 				{
-
+					
 					transition:doPigFinale,
 					intro:`"Dont't do it."`,
 					q:[
@@ -396,7 +400,7 @@
 					],
 				},
 				{
-					track:MUSIC.REDEMPTION_A,
+					trackIntro:MUSIC.REDEMPTION_A,
 					transition:doBunnyFinale,
 					intro:`"Because you are loved."`,
 					q:[
@@ -411,9 +415,9 @@
 					],
 				},
 				{
-					track:MUSIC.REDEMPTION_B,
+					
 					transition:doLogFinale,
-					intro:`"You're not alone."`,
+					//intro:`"You're not alone."`,
 					q:[
 						"But you won't be always be here.",
 						"But the world is a lonely place.",
@@ -426,7 +430,7 @@
 					]
 				},
 				{
-					track:MUSIC.ANTICIPATION_A,
+					
 					transition:doStrawbs,
 					q:[
 						"I do like Strawbs.",
@@ -464,30 +468,63 @@
 			function doThoughtIntro(){
 				$('.message').html(thoughts[iThought].intro).animate({opacity:1},500).delay(1500).animate({opacity:0},500);
 
-				if(thoughts[iThought].isInteresting) MUSIC.to(MUSIC.INTERESTING);
+				
+				if(thoughts[iThought].trackIntro) MUSIC.to(thoughts[iThought].trackIntro);
 
 				setTimeout(doThoughtBubble,2500);
 			}
 
+			var timeAtThought = 0;
+			var iThoughtTimer = 0;
+			var MAX_TIME_PER_THOUGHT = 20;
+			var secondsWas = MAX_TIME_PER_THOUGHT;
+
 			function doThoughtBubble(){
 
-				//MUSIC.to(MUSIC.QUESTION);
+				$('.timer').hide();
 
+				console.log('doThoughtBubble',iThought,thoughts[iThought].track)
 				if(thoughts[iThought].track) MUSIC.to(thoughts[iThought].track);
 
-				$('.question').empty();
+				$('.question-options').empty();
 				$('.question').animate({opacity:1});
 
 				var thought = thoughts[iThought];
 
 				for(var i=0; i<thought.q.length; i++){
-					$('<button>').appendTo($('.question')).text(thought.q[i]).click(onThoughtSelect);
+					$('<button>').appendTo($('.question-options')).text(thought.q[i]).click(onThoughtSelect);
 				}	
+
+				secondsWas = MAX_TIME_PER_THOUGHT;
+				timeAtThought = new Date().getTime();
+				iThoughtTimer = setInterval(tickThoughtTimer,100);
 
 				setTimeout(activateButtons,1000);
 			}
 
+			function tickThoughtTimer(){
+				var timeNow = new Date().getTime();
+				var elapsed = timeNow - timeAtThought;
+				var remaining = MAX_TIME_PER_THOUGHT*1000-elapsed;
+				var secondsNow = Math.ceil( remaining/1000 );
+
+				if(secondsNow<secondsWas && secondsNow<=10){
+					$('.timer').html(secondsNow).addClass('bloat').show();
+					setTimeout(function(){
+						$('.timer').removeClass('bloat');
+					},100)
+				}
+
+				secondsWas = secondsNow;
+
+				if(remaining < -500) $('.question-options button').eq( Math.floor(Math.random()*3) ).trigger('click');
+			}
+
 			function onThoughtSelect(){
+
+				clearInterval(iThoughtTimer);
+				$('.timer').hide();
+
 				$('.question button').addClass('dead');
 				$(this).addClass('selected').removeClass('dead');
 
@@ -527,7 +564,7 @@
 			var iRun = 0;
 			function doRunTransition(){
 
-				setTimeout(function(){ MUSIC.to(MUSIC.STROLL); },1000);
+				setTimeout(function(){ MUSIC.to(MUSIC.STROLLS[(iRun%MUSIC.STROLLS.length)]); },800);
 
 				var $old = $('.enemy');
 
@@ -549,6 +586,7 @@
 			}
 
 			function doRunForever(){
+				MUSIC.to(MUSIC.STROLL_C);
 				var cycles = 100;
 				iRun += 100;
 				var offset = -iRun*50;
@@ -579,6 +617,7 @@
 				});
 
 				function doWait(){
+					MUSIC.to(MUSIC.REDEMPTION_B);
 					flashMessage(`"Wait..."`);
 				}
 
@@ -607,6 +646,7 @@
 
 				setTimeout(function(){
 					flashMessage(`"You're not alone."`);
+					MUSIC.to(MUSIC.ANTICIPATION_A);
 				},2000);
 
 				setTimeout(function(){
@@ -623,6 +663,8 @@
 			}
 
 			function doStrawbs(){
+
+
 
 				setTimeout(function(){
 					$('.pig').addClass('run').animate({left:'25vw'},1000,function(){
@@ -644,6 +686,7 @@
 
 
 				setTimeout(function(){
+					MUSIC.to(MUSIC.REDEMPTION_A);
 					flashMessage(`"You're right."`);
 				},1000);
 
@@ -656,15 +699,19 @@
 				},7000);
 
 				setTimeout(function(){
+					
 					flashMessage(`"You will always be loved."`);
 				},10000);
 
 				setTimeout(function(){
+					MUSIC.to(MUSIC.ANTICIPATION_C);
 					flashMessage(`"Also..."`);
 				},15000);
 
 				setTimeout(function(){
+					MUSIC.to(MUSIC.REDEMPTION_A);
 					flashMessage(`"We have Strawbs."`);
+					
 				},18000);
 
 				setTimeout(doThoughtBubble,21000);
@@ -711,6 +758,10 @@
 				},7500);
 
 				setTimeout(function(){
+
+					setTimeout(function(){
+						MUSIC.to(MUSIC.STROLL_A);
+					},1500)
 					$('.finale').animate({opacity:1},2000).delay(1500).animate({top:-$('.finale').height()+$(window).innerHeight()},30000,'linear');
 				},10000);
 			}
@@ -722,7 +773,7 @@
 			}
 
 			function doIntroTranstion(){
-				MUSIC.to(MUSIC.STROLL);
+				MUSIC.to(MUSIC.STROLL_A);
 				$('.character').addClass('run').animate({left:'40vw'},4000,'linear',onTransitionComplete); 
 			}
 
@@ -823,7 +874,30 @@
 		})
 	</script>
 	<script type="text/javascript" src='./music.js'></script>
+	<script type="text/javascript" src='./storm.js'></script>
 	<style>
+
+		.storm{
+			position: fixed;
+			display: block;
+			top: 0px;
+			left: 0px;
+			width: 475px;
+			height: 257px;
+			background-image: url('./storm-sprites.png');
+			display: none;
+		}
+
+		.storm:after{
+			content: "";
+			display: block;
+			top: 0px;
+			left: 475px;
+			width: 475px;
+			height: 257px;
+			background-image: url('./storm.gif');
+			position: absolute;
+		}
 
 		.reader{
 			position: fixed;
@@ -1356,6 +1430,27 @@
 			margin: 2px;
 		}
 
+		.timer{
+			display: block;
+			width: 100px;
+			height: 100px;
+			line-height: 110px;
+			text-align: center;
+			position: absolute;
+			right: -60px;
+			top: -60px;
+			font-size: 70px;
+			background-image: url('./timer.png');
+			background-size: cover;
+			transform: rotate(10deg) scale(1);
+			color: red;
+			transition: all 0.1s;
+		}
+
+		.timer.bloat{
+			transform: rotate(10deg) scale(1.2);
+		}
+
 
 	</style>
 </head>
@@ -1381,7 +1476,8 @@
 		<button><blips><blip></blip><blip></blip><blip></blip></blips>START></button>
 	</div>
 	<div class='question bubble'>
-
+		<div class='question-options'></div>
+		<div class='timer'></div>
 	</div>
 	<div class="message"></div>
 	<div class="feedback">Hello</div>
@@ -1404,5 +1500,6 @@
 		
 		
 	</div>
+	<div class='storm'></div>
 </body>
 </html>

@@ -19,7 +19,9 @@ function onMIDISuccess(midiAccess) {
 	}
 
     for (var input of midiAccess.inputs.values()){
-    	console.log(input);
+    	console.log('input',input);
+    	input.onmidimessage = onMidiMessage;
+    	input.open();
     }
 }
 
@@ -32,5 +34,10 @@ function onMidiState(e){
 }
 
 function doMusicCue(message){
+	console.log('doMusicCue',message);
 	output.send(message);
+}
+
+function onMidiMessage(m){
+	console.log('onMidiMessage',m);
 }
