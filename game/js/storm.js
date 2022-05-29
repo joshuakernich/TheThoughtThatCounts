@@ -1,4 +1,4 @@
-$(function(){
+var Storm = function(){
 
 	const W_SHEET = 4096;
 	const W = 475;
@@ -26,19 +26,16 @@ $(function(){
 		if(iTick==51) MIDI.send(MIDI.LIGHTNING_STRIKE_L);
 	}
 
-	MIDI.toStorm = function(){
+	this.toStorm = function(){
 		iTick = 0;
 		tick();
 		iTick = setInterval(tick,1000/12);
 		$s.show();
-		MIDI.senf(MIDI.NIGHT_MODE);
 	}
 
-	MIDI.toCalm = function(){
+	this.toCalm = function(){
 		clearInterval(iTick);
 		$s.hide();
-		MIDI.send(MIDI.DAY_MODE);
-		console.log('here');
 	}
 
-})
+};
