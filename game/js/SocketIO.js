@@ -4,7 +4,7 @@ var SocketIO = function(){
   var key = '6df349d1b1c8f47e9f08b3a5cb391e8c';
   var channel = 2; // from 1 to 10,000,000 // need a new channel for every "sandbox" of comms
   var endpoint = `wss://socketsbay.com/wss/v2/${channel}/${key}/`;
-  endpoint = 'wss://ws.postman-echo.com/raw';
+  //endpoint = 'wss://ws.postman-echo.com/raw';
   var fnListener;
 
   console.log(endpoint);
