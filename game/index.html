@@ -2,6 +2,8 @@
 <html>
 <head>
 	<script type="text/javascript" src='./js/jq.js'></script>
+	<script type="text/javascript" src='./js/howler.min.js'></script>
+	<script type="text/javascript" src='./js/WebAudioIO.js'></script>
 	<script type="text/javascript" src='./js/MidiIO.js'></script>
 	<script type="text/javascript" src='./js/SocketIO.js'></script>
 	<script type="text/javascript" src='./js/storm.js'></script>
@@ -9,12 +11,18 @@
 	
 	
 	<title>The Thought That Counts</title>
+	<audio>
+		<source src="./music/everything-and-more.mp3" type="">
+	</audio>
 	<script type="text/javascript">
 
 		$(function(){
-			var ioMusic = new MidiIO();
-			var ioInput = new SocketIO();
-			var game = new Game(ioMusic,ioInput);
+			var ioMusic = new WebAudioIO($('audio')[0]);
+			//var ioMusic = new MidiIO();
+			//var ioInput = new SocketIO();
+			//var game = new Game(ioMusic,ioInput);
+
+			
 		})
 	</script>
 	<style>
@@ -104,14 +112,12 @@
 			position: absolute;
 			right: 5px;
 			top: 5px;
-			background: yellow;
 			padding: 5px;
-			font-size: 20px;
-			border: 2px solid #333;
+			font-size: 30px;
 		}
 
 		.count:before{
-			content: "+ ";
+			content: "+";
 		}
 
 		.bg{
@@ -628,6 +634,34 @@
 			transform: rotate(10deg) scale(1.2);
 		}
 
+		.qr{
+			margin: auto;
+			width: 300px;
+			left: 0px;
+			right: 0px;
+			top: 70px;
+			position: absolute;
+			text-align: center;
+			padding: 0px;
+			background: white;
+			padding: 10px;
+		}
+
+		.qr img{
+			width: 100%;
+		}
+
+		.qr .rollcall{
+			font-size: 30px;
+			margin:0px 0px 15px;
+			text-align: center;
+
+			padding: 5px 0px;
+			border-top: 1px solid black;
+			border-bottom: 1px solid black;
+
+		}
+
 
 	</style>
 </head>
@@ -644,15 +678,21 @@
 		<div class='sprite character'></div>
 		
 	</div>
-	<div class='menu'>
+	<!--div class='menu'>
 		<h1>Choose your level<br>of shenanigans</h1>
 		<div class='bubble'>
+			
 			<button>ADULT</button><hr><button></button><hr><button>PG</button>
 		</div>
 	</div>
 	<div class='intro'>
 		<div class='bubble'><h1>The Thought<br>that Counts</h1></div><br>
 		<button><blips><blip></blip><blip></blip><blip></blip></blips>START></button>
+	</div-->
+	<div class="bubble qr">
+		<img src="QR.png"/>
+		<p class="rollcall">0 connections</p>
+		<div class='timer'></div>
 	</div>
 	<div class='question bubble'>
 		<div class='question-options'></div>

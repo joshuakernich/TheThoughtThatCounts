@@ -7,14 +7,35 @@
   <script type="text/javascript" src='./js/SocketIO.js'></script>
   <script type="text/javascript">
     $(function(){
+
       var socket = new SocketIO();
+      socket.addListener('activate',onActivate);
+      socket.addListener('deactivate',onDeactivate);
+      
+      function onActivate(m){
+        $('button').addClass('active');
+      }
+
+      function onDeactivate(m){
+        $('button').removeClass('active');
+      }
 
       $('button').click(function(){
-        socket.send('click!');
-      })
+        var iSelect = $('button').index(this);
+        socket.send('input',iSelect);
+        onDeactivate();
+      });
+
+      onDeactivate();
     })
   </script>
   <style type="text/css">
+    :root {
+      --red: #ff6666;
+      --yellow: #ffdd55;
+      --green: #55ee55;
+    }
+
     body{
       margin: 0px;
       padding: 0px;
@@ -39,11 +60,22 @@
       width: 30vw;
       height: 30vw;
       display: block;
-      background: green;
+      background: var(--red);
       border: none;
       margin: 20px;
-      border: 2px solid rgba(0,0,0,0.5);
-      border-bottom-width: 15px;
+      border: 10px solid white;
+      box-shadow: inset 0px 5px rgba(0,0,0,0.2), 0px 5px #ddd, 0px 5px 10px rgba(0,0,0,0.2);
+      opacity: 0.2;
+      pointer-events:  none;
+    }
+
+    button:nth-of-type(1){ background-color: var(--red); }
+    button:nth-of-type(2){ background-color: var(--yellow); }
+    button:nth-of-type(3){ background-color: var(--green); }
+
+    button.active{
+      opacity: 1;
+      pointer-events: all;
     }
 
     .logo{

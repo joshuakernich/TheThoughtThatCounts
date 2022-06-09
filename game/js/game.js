@@ -1,7 +1,10 @@
 var Game = function(ioMusic, ioJoystick){
-  var iThought = -1;
+  var iThought = 0;
 
   var thoughts =[
+    {
+      delegate:doQR
+    },
     {
       transition:doIntroTranstion,
       q:[
@@ -413,11 +416,9 @@ var Game = function(ioMusic, ioJoystick){
 
   var storm = new Storm();
 
-
   function doNextThought(){
-    
-
-    if(thoughts[iThought].intro) doThoughtIntro();
+    if(thoughts[iThought].delegate) thoughts[iThought].delegate();
+    else if(thoughts[iThought].intro) doThoughtIntro();
     else doThoughtBubble();
   }
 
@@ -427,15 +428,45 @@ var Game = function(ioMusic, ioJoystick){
     else return s;
   }
 
-  function doThoughtIntro(){
-    $('.message').html(makePG(thoughts[iThought].intro)).animate({opacity:1},500).delay(1500).animate({opacity:0},500);
+  function doQR(){
+    $('.qr').show();
 
-    
-    if(thoughts[iThought].trackIntro) ioMusic.send(thoughts[iThought].trackIntro);
+    var TIMER = 15;
+    var timeLaunchQR = new Date().getTime();
+    var iTick = setInterval(tickQR,50);
 
-    setTimeout(doThoughtBubble,2500);
+    function tickQR(){
+      var timeNow = new Date().getTime();
+      var timeElapsed = timeNow - timeLaunchQR;
+      var timeRemaining = TIMER * 1000 - timeElapsed;
+      var secondsRemaining = Math.ceil(timeRemaining/1000);
+      $('.qr .timer').text(secondsRemaining);
+
+      if(timeRemaining<=0){
+        clearInterval(iTick);
+        $('.qr').animate({top:-500},500,endQR);
+      }
+    }
+
   }
 
+  function endQR(){
+    $('.qr').hide();
+    finishThought();
+  }
+
+  function onRollcall(){
+    $('.qr .rollcall').text(ioJoystick.rollcall.length + ' connections');
+  }
+
+  ioJoystick.addListener('checkin',onRollcall);
+  ioJoystick.addListener('checkout',onRollcall);
+
+  function doThoughtIntro(){
+    $('.message').html(makePG(thoughts[iThought].intro)).animate({opacity:1},500).delay(1500).animate({opacity:0},500);
+    if(thoughts[iThought].trackIntro) ioMusic.send(thoughts[iThought].trackIntro);
+    setTimeout(doThoughtBubble,2500);
+  }
 
   var timeAtThought = 0;
   var iThoughtTimer = 0;
@@ -455,7 +486,8 @@ var Game = function(ioMusic, ioJoystick){
     var thought = thoughts[iThought];
 
     for(var i=0; i<thought.q.length; i++){
-      $('<button>').appendTo($('.question-options')).html(makePG(thought.q[i])).click(onThoughtSelect);
+      var $b = $('<button>').appendTo($('.question-options')).html(makePG(thought.q[i])).click(onThoughtSelect);
+      $b.append('<div class="count">0</div>')
     } 
 
     secondsWas = MAX_TIME_PER_THOUGHT;
@@ -480,10 +512,14 @@ var Game = function(ioMusic, ioJoystick){
 
     secondsWas = secondsNow;
 
-    if(remaining < -500) $('.question-options button').eq( Math.floor(Math.random()*3) ).trigger('click');
+    if(remaining < -500){
+      $('.question-options button').eq( Math.floor(Math.random()*3) ).trigger('click');
+    }
   }
 
   function onThoughtSelect(){
+
+    ioJoystick.deactivate();
 
     clearInterval(iThoughtTimer);
     $('.timer').hide();
@@ -518,7 +554,6 @@ var Game = function(ioMusic, ioJoystick){
     if( thoughts[iThought].transition ) thoughts[iThought].transition.call();
     else doNextThought();
   }
-
 
   // TRANSITIONS
   var iRun = 0;
@@ -727,7 +762,7 @@ var Game = function(ioMusic, ioJoystick){
 
   function doThunderTransition(){
     ioMusic.send(ioMusic.M.LIGHTNING);
-    ioMusic.send(ioMusic.NIGHT_MODE);
+    ioMusic.send(ioMusic.M.NIGHT_MODE);
     storm.toStorm();
     //$('.bg').addClass('thunder');
     setTimeout(doNextThought,4000);
@@ -779,9 +814,11 @@ var Game = function(ioMusic, ioJoystick){
     $('.character').removeClass('ouch run');
   }
 
-  var whereWeAt = 'menu';
-
   var isPG = false;
+
+  /*var whereWeAt = 'menu';
+
+  
   $('.menu button').click(function(){
 
     whereWeAt = 'nowhere';
@@ -813,22 +850,38 @@ var Game = function(ioMusic, ioJoystick){
 
       whereWeAt = 'game'
     });
-  });
+  });*/
 
   function activateButtons(){
+
+    votes = [0,0,0];
+
     ioJoystick.activate();
   }
 
-  ioJoystick.receive = function(d){
+  ioJoystick.addListener('input',onJoystick);
 
-    if(whereWeAt == 'menu'){
-      if(d[2] != 1) $('.menu button').eq(d[2]).click();
+  function onJoystick(n){
+    
+
+    n = parseInt(n);
+    votes[n] ++;
+
+    $('.count').eq(n).text(votes[n]).addClass('has-a-vote');
+
+    var cnt = 0;
+    for(var i in votes) cnt += votes[i];
+
+    if(cnt >= ioJoystick.rollcall.length) $('.question button').eq(n).click();
+
+    /*if(whereWeAt == 'menu'){
+      if(n != 1) $('.menu button').eq(n).click();
     } else if (whereWeAt == 'start'){
       $('.intro button').click();
     } else if (whereWeAt == 'game'){
-      $('.question button').eq(d[2]).click();
-    }
-
-    
+      $('.question button').eq(n).click();
+    }*/
   }
+
+  doNextThought();
 }
