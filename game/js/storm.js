@@ -1,4 +1,4 @@
-var Storm = function(){
+var Storm = function(ioFX){
 
 	const W_SHEET = 4096;
 	const W = 475;
@@ -21,9 +21,9 @@ var Storm = function(){
 		offset['background-position-y'] = -Math.floor(iTick/columns)*100 + '%';
 		$s.css(offset);
 
-		if(iTick==3) MIDI.send(MIDI.LIGHTNING_STRIKE_S);
-		if(iTick==6) MIDI.send(MIDI.LIGHTNING_STRIKE_M);
-		if(iTick==51) MIDI.send(MIDI.LIGHTNING_STRIKE_L);
+		if(iTick==3) ioFX.doLightning(1);
+		if(iTick==6) ioFX.doLightning(2);
+		if(iTick==51) ioFX.doLightning(3);
 	}
 
 	this.toStorm = function(){

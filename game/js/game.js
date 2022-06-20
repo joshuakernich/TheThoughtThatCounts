@@ -1,5 +1,6 @@
-var Game = function(ioMusic, ioJoystick){
+var Game = function(ioMusic, ioFX, ioJoystick){
   var iThought = 0;
+  iThought = 8;
 
   var thoughts =[
     {
@@ -119,7 +120,7 @@ var Game = function(ioMusic, ioJoystick){
     {
       transition:doRunTransition, 
       transitionParams:{type:'bunny'},
-      trackIntro:ioMusic.M.INTERESTING,
+      trackIntro:ioMusic.INTERESTING,
       intro:'Wait! what?',
       q:[
         "Must be a glitch in the Matrix.",
@@ -260,7 +261,7 @@ var Game = function(ioMusic, ioJoystick){
     },
     {
       isWonky:true,
-      track:ioMusic.M.DESCENT_A,
+      track:ioMusic.DESCENT_A,
       q:[
         "I am very much alone.",
         "There are no more Strawbs for me.",
@@ -274,7 +275,7 @@ var Game = function(ioMusic, ioJoystick){
     },
     {
       isWonky:true,
-      track:ioMusic.M.DESCENT_B,
+      track:ioMusic.DESCENT_B,
       q:[
         "I am alone.",
         "It's hopeless.",
@@ -314,7 +315,7 @@ var Game = function(ioMusic, ioJoystick){
       ],
     },
     {
-      track:ioMusic.M.CLIFF,
+      track:ioMusic.CLIFF,
       isWonky:true,
       q:[
         "There is no way out.",
@@ -357,7 +358,7 @@ var Game = function(ioMusic, ioJoystick){
       ],
     },
     {
-      trackIntro:ioMusic.M.REDEMPTION_A,
+      trackIntro:ioMusic.REDEMPTION_A,
       transition:doBunnyFinale,
       intro:`"Because you are loved."`,
       q:[
@@ -414,7 +415,7 @@ var Game = function(ioMusic, ioJoystick){
     }
   ]
 
-  var storm = new Storm();
+  var storm = new Storm(ioFX);
 
   function doNextThought(){
     if(thoughts[iThought].delegate) thoughts[iThought].delegate();
@@ -529,13 +530,13 @@ var Game = function(ioMusic, ioJoystick){
 
     var index = $('.question button').index(this);
 
-    ioMusic.send(thoughts[iThought].isWonky?ioMusic.M.CHOICE_WONKY:ioMusic.M.CHOICE);
+    ioMusic.send(thoughts[iThought].isWonky?ioMusic.CHOICE_WONKY:ioMusic.CHOICE);
 
     $('.question').delay(1700).animate({opacity:0});
     if(thoughts[iThought].f[index].text){
       $('.feedback').html(makePG(thoughts[iThought].f[index].text)).css({top:'100vh'}).delay(2000).animate({top:'50vh'}).animate({top:'45vh'},3000).animate({top:'-150px'});
 
-      setTimeout(function(){ ioMusic.send(ioMusic.M.FEEDBACK); },2000);
+      setTimeout(function(){ ioMusic.send(ioMusic.FEEDBACK); },2000);
     }
 
     if( thoughts[iThought].f[index].action ){
@@ -559,7 +560,7 @@ var Game = function(ioMusic, ioJoystick){
   var iRun = 0;
   function doRunTransition(){
 
-    setTimeout(function(){ ioMusic.send(ioMusic.M.STROLLS[(iRun%ioMusic.M.STROLLS.length)]); },800);
+    setTimeout(function(){ ioMusic.send(ioMusic.STROLLS[(iRun%ioMusic.STROLLS.length)]); },800);
 
     var $old = $('.enemy');
 
@@ -581,7 +582,7 @@ var Game = function(ioMusic, ioJoystick){
   }
 
   function doRunForever(){
-    ioMusic.send(ioMusic.M.STROLL_C);
+    ioMusic.send(ioMusic.STROLL_C);
     var cycles = 100;
     iRun += 100;
     var offset = -iRun*50;
@@ -612,7 +613,7 @@ var Game = function(ioMusic, ioJoystick){
     });
 
     function doWait(){
-      ioMusic.send(ioMusic.M.REDEMPTION_B);
+      ioMusic.send(ioMusic.REDEMPTION_B);
       flashMessage(`"Wait..."`);
     }
 
@@ -641,7 +642,7 @@ var Game = function(ioMusic, ioJoystick){
 
     setTimeout(function(){
       flashMessage(`"You're not alone."`);
-      ioMusic.send(ioMusic.M.ANTICIPATION_A);
+      ioMusic.send(ioMusic.ANTICIPATION_A);
     },2000);
 
     setTimeout(function(){
@@ -679,7 +680,7 @@ var Game = function(ioMusic, ioJoystick){
 
 
     setTimeout(function(){
-      ioMusic.send(ioMusic.M.REDEMPTION_A);
+      ioMusic.send(ioMusic.REDEMPTION_A);
       flashMessage(`"You're right."`);
     },1000);
 
@@ -697,12 +698,12 @@ var Game = function(ioMusic, ioJoystick){
     },10000);
 
     setTimeout(function(){
-      ioMusic.send(ioMusic.M.ANTICIPATION_C);
+      ioMusic.send(ioMusic.ANTICIPATION_C);
       flashMessage(`"Also..."`);
     },15000);
 
     setTimeout(function(){
-      ioMusic.send(ioMusic.M.REDEMPTION_A);
+      ioMusic.send(ioMusic.REDEMPTION_A);
       flashMessage(`"We have Strawbs."`);
       
     },18000);
@@ -711,8 +712,8 @@ var Game = function(ioMusic, ioJoystick){
   }
 
   function doWin(){
-    ioMusic.send(ioMusic.M.STROLL_B);
-    ioMusic.send(ioMusic.M.DAY_MODE);
+    ioMusic.send(ioMusic.STROLL_B);
+    ioFX.doDay();
     storm.toCalm();
 
     setTimeout(function(){
@@ -754,22 +755,22 @@ var Game = function(ioMusic, ioJoystick){
     setTimeout(function(){
 
       setTimeout(function(){
-        ioMusic.send(ioMusic.M.STROLL_A);
+        ioMusic.send(ioMusic.STROLL_A);
       },1500)
       $('.finale').animate({opacity:1},2000).delay(1500).animate({top:-$('.finale').height()+$(window).innerHeight()},30000,'linear');
     },10000);
   }
 
   function doThunderTransition(){
-    ioMusic.send(ioMusic.M.LIGHTNING);
-    ioMusic.send(ioMusic.M.NIGHT_MODE);
+    ioMusic.send(ioMusic.LIGHTNING);
+    ioFX.doNight();
     storm.toStorm();
     //$('.bg').addClass('thunder');
     setTimeout(doNextThought,4000);
   }
 
   function doIntroTranstion(){
-    ioMusic.send(ioMusic.M.STROLL_A);
+    ioMusic.send(ioMusic.STROLL_A);
     $('.character').addClass('run').animate({left:'40vw'},4000,'linear',onTransitionComplete); 
   }
 

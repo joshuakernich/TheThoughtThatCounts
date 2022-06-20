@@ -1,26 +1,33 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script type="text/javascript" src='./js/jq.js'></script>
-	<script type="text/javascript" src='./js/howler.min.js'></script>
-	<script type="text/javascript" src='./js/WebAudioIO.js'></script>
-	<script type="text/javascript" src='./js/MidiIO.js'></script>
-	<script type="text/javascript" src='./js/SocketIO.js'></script>
+	<!-- libs -->
+	<script type="text/javascript" src='./js/lib/jq.js'></script>
+	<script type="text/javascript" src='./js/lib/howler.min.js'></script>
+
+	<!-- audio -->
+	<script type="text/javascript" src='./music/encoded.js'></script>
+
+	<!-- IO utils -->
+	<script type="text/javascript" src='./js/io/WebAudioIO.js'></script>
+	<script type="text/javascript" src='./js/io/FxIO.js'></script>
+	<script type="text/javascript" src='./js/io/SocketIO.js'></script>
+
+	<!-- controllers -->
 	<script type="text/javascript" src='./js/storm.js'></script>
 	<script type="text/javascript" src='./js/game.js'></script>
 	
 	
 	<title>The Thought That Counts</title>
-	<audio>
-		<source src="./music/everything-and-more.mp3" type="">
-	</audio>
+
+
 	<script type="text/javascript">
 
 		$(function(){
-			var ioMusic = new WebAudioIO($('audio')[0]);
-			//var ioMusic = new MidiIO();
-			//var ioInput = new SocketIO();
-			//var game = new Game(ioMusic,ioInput);
+			var ioMusic = new WebAudioIO(window.TRACK64);
+			var ioInput = new SocketIO();
+			var ioFX = new FxIO();
+			var game = new Game(ioMusic,ioFX,ioInput);
 
 			
 		})
