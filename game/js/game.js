@@ -1,11 +1,13 @@
 var Game = function(ioMusic, ioFX, ioJoystick){
   var iThought = 0;
-  iThought = 8;
 
   var thoughts =[
     {
-      delegate:doQR
+      delegate:doLogoIntro
     },
+    /*{
+      delegate:doQR
+    },*/
     {
       transition:doIntroTranstion,
       q:[
@@ -429,6 +431,16 @@ var Game = function(ioMusic, ioFX, ioJoystick){
     else return s;
   }
 
+  function doLogoIntro(){
+    $('.logo-intro').show();
+    $('.logo-intro button').click(function(){
+      $('.logo-intro').hide();
+      finishThought();
+    });
+    //$('<div style="background-image:url(./logo.png);height:500px;background-size:contain;background-size:center;background-repeat:no-repeat;">').appendTo('.sprites');
+  }
+
+  $('.qr').hide();
   function doQR(){
     $('.qr').show();
 
@@ -488,7 +500,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
 
     for(var i=0; i<thought.q.length; i++){
       var $b = $('<button>').appendTo($('.question-options')).html(makePG(thought.q[i])).click(onThoughtSelect);
-      $b.append('<div class="count">0</div>')
+      //$b.append('<div class="count">0</div>')
     } 
 
     secondsWas = MAX_TIME_PER_THOUGHT;
@@ -565,7 +577,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
     var $old = $('.enemy');
 
     if(thoughts[iThought].transitionParams.type){
-      var $new = $('<div class="sprite enemy">').appendTo('.game').addClass(thoughts[iThought].transitionParams.type);
+      var $new = $('<div class="sprite enemy">').appendTo('.sprites').addClass(thoughts[iThought].transitionParams.type);
       $new.animate({left:'50vw'},4000,'linear'); 
 
     }
@@ -573,7 +585,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
     iRun++;
     var offset = -iRun*50;
 
-    $('.character').appendTo('.game').addClass('run').animate({left:'40vw'},4000,'linear',onTransitionComplete); 
+    $('.character').appendTo('.sprites').addClass('run').animate({left:'40vw'},4000,'linear',onTransitionComplete); 
     $('.ground-surface').animate({'background-position-x':(''+offset+'vw')},4000,'linear'); 
 
     if($old) $old.animate({left:'-50px'},4000,'linear',function(){
@@ -613,12 +625,12 @@ var Game = function(ioMusic, ioFX, ioJoystick){
     });
 
     function doWait(){
-      ioMusic.send(ioMusic.REDEMPTION_B);
+      //ioMusic.send(ioMusic.REDEMPTION_B);
       flashMessage(`"Wait..."`);
     }
 
     function doMisterPig(){
-      $('<div class="sprite enemy pig run">').appendTo('.game').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'20vw'},1000,'linear', function(){
+      $('<div class="sprite enemy pig run">').appendTo('.sprites').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'20vw'},1000,'linear', function(){
         $(this).removeClass('run');
       });
     }
@@ -629,20 +641,20 @@ var Game = function(ioMusic, ioFX, ioJoystick){
   }
 
   function doBunnyFinale(){
-    $('<div class="sprite enemy bunny run">').appendTo('.game').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'15vw'},1000,'linear', function(){
+    $('<div class="sprite enemy bunny run">').appendTo('.sprites').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'15vw'},1000,'linear', function(){
       $(this).removeClass('run');
     });
     setTimeout(doNextThought,2000);
   }
 
   function doLogFinale(){
-    $('<div class="sprite enemy log run">').appendTo('.game').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'8vw'},1000,'linear', function(){
+    $('<div class="sprite enemy log run">').appendTo('.sprites').css({transform:'scaleX(-1)',left:'-100px'}).animate({left:'8vw'},1000,'linear', function(){
       $(this).removeClass('run'); 
     });
 
     setTimeout(function(){
       flashMessage(`"You're not alone."`);
-      ioMusic.send(ioMusic.ANTICIPATION_A);
+      //ioMusic.send(ioMusic.ANTICIPATION_A);
     },2000);
 
     setTimeout(function(){
@@ -680,7 +692,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
 
 
     setTimeout(function(){
-      ioMusic.send(ioMusic.REDEMPTION_A);
+      //ioMusic.send(ioMusic.REDEMPTION_A);
       flashMessage(`"You're right."`);
     },1000);
 
@@ -698,12 +710,12 @@ var Game = function(ioMusic, ioFX, ioJoystick){
     },10000);
 
     setTimeout(function(){
-      ioMusic.send(ioMusic.ANTICIPATION_C);
+      //ioMusic.send(ioMusic.ANTICIPATION_C);
       flashMessage(`"Also..."`);
     },15000);
 
     setTimeout(function(){
-      ioMusic.send(ioMusic.REDEMPTION_A);
+      //ioMusic.send(ioMusic.REDEMPTION_A);
       flashMessage(`"We have Strawbs."`);
       
     },18000);
@@ -718,7 +730,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
 
     setTimeout(function(){
       $('.enemy').each(function(){
-      $('<div class="sprite enemy strawb">').appendTo('.game').css({left:$(this).css('left')}).animate({top:-150});
+      $('<div class="sprite enemy strawb">').appendTo('.sprites').css({left:$(this).css('left')}).animate({top:-150});
       })
     },500);
 
@@ -782,7 +794,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
   // ACTIONS
   function flyAway(){
 
-    $('<div class="beam">').appendTo('.game').css({left:$('.enemy').css('left')})
+    $('<div class="beam">').appendTo('.sprites').css({left:$('.enemy').css('left')})
     .css({opacity:0}).animate({opacity:1},200).delay(600).animate({opacity:0});
 
     $('.enemy').animate({top:'-100vh'},1000,function(){

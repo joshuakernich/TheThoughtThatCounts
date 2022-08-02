@@ -8,7 +8,7 @@ var WebAudioIO = function(audio){
     STROLL_B:['00:45.839','01:03.499',true],
     STROLL_C:['01:14.294','01:33.456',true],
 
-    INTERESTING:['18:35.989','18:52.981',true],
+    INTERESTING:['02:45.452','02:54.547',true],
     CHOICE:['03:50.147','03:51.553',false],
     CHOICE_WONKY:['03:29.971','03:32.408',false],
     FEEDBACK:['02:45.452','02:54.547',true],
@@ -26,6 +26,8 @@ var WebAudioIO = function(audio){
     ANTICIPATION_C:['15:20.793','16:32.889',true],
   }
 
+
+
   function ms(stamp){
     var arr = stamp.split(/\.|:/);
     return parseInt(arr[0])*60*1000 + parseInt(arr[1])*1000 + parseInt(arr[2]);
@@ -37,12 +39,12 @@ var WebAudioIO = function(audio){
     var to = ms(tracks[n][1]);
     var dur = to-from;
     var loop = tracks[n][2];
-    sprite[n] = [from,dur,loop];
+    sprite[n] = [from,dur,false];
 
     self[n] = n;
   }
 
-  this.STROLLS = [this.STROLL_A,this.STROLL_B,this.STROLL_C];
+  this.STROLLS = [this.STROLL_A,this.STROLL_B/*,this.STROLL_C*/];
 
 
   /*
@@ -58,21 +60,32 @@ var WebAudioIO = function(audio){
 
   //console.log(audio.source);
 
+
   var sound = new Howl({
     src: [audio],
     format: ['mp3'],
-    sprite: sprite
+    sprite: sprite,
+    onend: onSoundEnd
   });
 
   var iMain; 
+
+  function onSoundEnd(i){
+    if(i==iMain){
+      //main track has ended
+      self.send('INTRO');
+    }
+  }
 
   this.send = function(t){
 
     var iNew = sound.play(t);
 
-    if(sprite[t][2]){
-      if(iMain != undefined) sound.fade(1,0,1000,iMain);
-      //sound.fade(0,1,1000,iNew);
+    if(tracks[t][2]){
+
+      if(iMain != undefined) sound.fade(0.7,0,100,iMain);
+      sound.volume(0.7,iNew);
+
       iMain = iNew;
     }
   }

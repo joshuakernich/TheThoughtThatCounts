@@ -1,4 +1,4 @@
-var SocketIO = function(){
+var SocketIO = function(active){
 
   var self = this;
   var idUnique = Math.random();
@@ -10,37 +10,41 @@ var SocketIO = function(){
   var channel = 1; // from 1 to 10,000,000 // need a new channel for every "sandbox" of comms
   var endpoint = `wss://s3882.sgp1.piesocket.com/v3/${channel}?api_key=${key}&notify_self=1`;
 
-  var s = new WebSocket(endpoint);
-  s.onmessage = onMessage;
+  var s;
 
-  s.onclose   = function(evt) { 
-    console.log('socket',evt.type);
-  };
-  s.onerror   = function(evt) { 
-    console.log('socket',evt.type);
-  };
-  s.onopen    = function(evt) { 
-    console.log('socket',evt.type);
-    self.send('checkin',idUnique);
+  if(active){
+    s = new WebSocket(endpoint);
+    s.onmessage = onMessage;
 
-    window.onbeforeunload = function(){
-      self.send('checkout',idUnique);
-    }
-  };
+    s.onclose   = function(evt) { 
+      console.log('socket',evt.type);
+    };
+    s.onerror   = function(evt) { 
+      console.log('socket',evt.type);
+    };
+    s.onopen    = function(evt) { 
+      console.log('socket',evt.type);
+      self.send('checkin',idUnique);
+
+      window.onbeforeunload = function(){
+        self.send('checkout',idUnique);
+      }
+    };
+  }
 
   this.send = function(t,d){
     console.log('send',t,d);
-    s.send(JSON.stringify([t,d])); 
+    if(s) s.send(JSON.stringify([t,d])); 
   }
 
   this.activate = function(){
     //it's button time
-    this.send('activate');
+    if(s) this.send('activate');
   }
 
   this.deactivate = function(){
     //it's not button time
-    this.send('deactivate');
+    if(s) this.send('deactivate');
   }
 
   function onMessage(m){
