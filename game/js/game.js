@@ -1,5 +1,6 @@
 var Game = function(ioMusic, ioFX, ioJoystick){
   var iThought = 0;
+  var isPG = true;
 
   var thoughts =[
     {
@@ -827,7 +828,7 @@ var Game = function(ioMusic, ioFX, ioJoystick){
     $('.character').removeClass('ouch run');
   }
 
-  var isPG = false;
+  
 
   /*var whereWeAt = 'menu';
 
